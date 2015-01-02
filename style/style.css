@@ -1,0 +1,15 @@
+body {
+    background-color: gray;
+}
+.calendarContainer {
+    width: 600px;
+    padding: 10px;
+    height: 700px;
+    background-color: #FFF;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
