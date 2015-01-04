@@ -2,9 +2,9 @@ body {
     background-color: gray;
 }
 .calendarContainer {
-    width: 600px;
+    width: 700px;
+    height: 740px;
     padding: 10px;
-    height: 700px;
     background-color: #FFF;
     position: absolute;
     margin: auto;
@@ -12,4 +12,23 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
+}
+.timeBlock {
+    height: 29px;
+}
+.calendarContainer .col-md-1 {
+    width: 11%;
+}
+.calendarContainer .col-md-11 {
+    width: 89%;
+}
+.eventContainer {
+    width: 600px;
+    height: 700px;
+    padding: 0 10px;
+    margin-top: 10px;
+    background-color: #ECECEC;
+}
+.railContainer {
+    height: 700px;
 }
