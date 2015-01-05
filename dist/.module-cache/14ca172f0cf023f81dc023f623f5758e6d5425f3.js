@@ -25,7 +25,7 @@ Calendar._setupHelper = function(dates) {
      */
     _.each(dates, function(date) {
         // we will do binary search for the correct item collection
-        var expectedLocation = _.sortedIndex(bundleList, {minStart: date.start}, function(obj) {
+        var expectedLocation = _.sortedIndex(bundleList, date.start, function(obj) {
                 return obj.minStart;
             }),
             currentBundle = null,
@@ -46,7 +46,7 @@ Calendar._setupHelper = function(dates) {
             };
         // we check possible collection for start and end, and merge them if needed
         // check for a special case where are all the way at the end
-        if (false && expectedLocation === bundleList.length) {
+        if (expectedLocation === bundleList.length) {
             currentBundle = new Calendar.ItemCollection();
             addToExistingBundle(currentBundle, date);
             currentBundle.minStart = date.start;
@@ -61,7 +61,7 @@ Calendar._setupHelper = function(dates) {
                 }
             }
             // check if we interest any end item collection
-            if (bundleList[expectedLocation] && bundleList[expectedLocation].minStart < date.end) {
+            if (bundleList[expectedLocation].minStart < date.end) {
                 endBundle = bundleList[expectedLocation];
                 if (endBundle.minStart > date.start) {
                     endBundle.minStart = date.start;
@@ -101,7 +101,7 @@ Calendar._setupHelper = function(dates) {
             outputList.push(model);
         });
     });
-    return outputList;
+    return bundleList;
 }
 var DEFAULT_VALUES = [{
     start: 30,

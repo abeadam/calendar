@@ -7,6 +7,6 @@ Calendar.MainView = Backbone.View.extend({
         );
     },
     updateCollection: function(items) {
-        this.collection.reset(items);
+        this.get('collection').reset(items);
     }
 });

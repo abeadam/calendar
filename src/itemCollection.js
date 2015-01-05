@@ -1,4 +1,4 @@
 var Calendar = Calendar || {};
-Calendar.ItemCollection = Backbone.collection.extend({
+Calendar.ItemCollection = Backbone.Collection.extend({
     model: Calendar.EventItem
 });

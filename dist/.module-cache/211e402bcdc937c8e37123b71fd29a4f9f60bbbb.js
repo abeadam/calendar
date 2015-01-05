@@ -46,7 +46,7 @@ Calendar._setupHelper = function(dates) {
             };
         // we check possible collection for start and end, and merge them if needed
         // check for a special case where are all the way at the end
-        if (false && expectedLocation === bundleList.length) {
+        if (expectedLocation === bundleList.length) {
             currentBundle = new Calendar.ItemCollection();
             addToExistingBundle(currentBundle, date);
             currentBundle.minStart = date.start;
@@ -61,7 +61,7 @@ Calendar._setupHelper = function(dates) {
                 }
             }
             // check if we interest any end item collection
-            if (bundleList[expectedLocation] && bundleList[expectedLocation].minStart < date.end) {
+            if (bundleList[expectedLocation].minStart < date.end) {
                 endBundle = bundleList[expectedLocation];
                 if (endBundle.minStart > date.start) {
                     endBundle.minStart = date.start;

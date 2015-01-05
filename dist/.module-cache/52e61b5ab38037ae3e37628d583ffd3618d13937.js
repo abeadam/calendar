@@ -7,11 +7,10 @@ Calendar.EventItem = Backbone.Model.extend({
         self.updateWidth();
         self.set('pixelHeight', timeSpan * Calendar.EventItem.hourPixelMapping);
         self.set('y', self.get('start') * Calendar.EventItem.hourPixelMapping);
+        self.set('x', self.get('itemNumber') * self.get('pixelWidth'));
     },
     updateWidth: function (){
-        var self = this;
-        self.set('pixelWidth', Calendar.EventItem.maxWidth/self.get('sharedItems'));
-        self.set('x', self.get('itemNumber') * self.get('pixelWidth'));
+        this.set('pixelWidth', Calendar.EventItem.maxWidth/this.get('sharedItems'));
     },
     updateShared: function(shared) {
         var self = this;

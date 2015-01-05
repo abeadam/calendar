@@ -6,7 +6,7 @@ Calendar.utils = {
         }
     }
 }
-Calendar.LeftRail = React.createClass({
+Calendar.LeftRail = React.createClass({displayName: "LeftRail",
             render: function() {
                 var defaults = this.props.defaults,
                     classes = {
@@ -30,22 +30,22 @@ Calendar.LeftRail = React.createClass({
                     // mode 12 because we are using AM , PM calendar, add one because we start at 1 not zero
                     currentHour = start%12+1
                     // main line
-                    leftRail.push( <div className="timeBlock"> <span className="pull-right"><span className = "h4" > {
-                            currentHour
-                        } </span><span className="h6">{flip?"PM" : "AM"}</span ></span>< /div>);
+                    leftRail.push( React.createElement("div", {className: "timeBlock"}, " ", React.createElement("span", {className: "pull-right"}, React.createElement("span", {className: "h4"}, " ", 
+                            currentHour, 
+                        " "), React.createElement("span", {className: "h6"}, flip?"PM" : "AM"))));
                     // sub line only added if we are not in the final line
                     if (!(flip && start % flipPoint == originalStart)) {
-                            leftRail.push( < div className="timeBlock"> < span className = "h6 pull-right" > {
-                                currentHour
-                            }: 30 < /span></div > );
+                            leftRail.push( React.createElement("div", {className: "timeBlock"}, " ", React.createElement("span", {className: "h6 pull-right"}, " ", 
+                                currentHour, 
+                            ": 30 ")) );
                         }
                     }
-                    return ( < div className={React.addons.classSet(classes)} > {
-                            leftRail
-                        } < /div>);
+                    return ( React.createElement("div", {className: React.addons.classSet(classes)}, " ", 
+                            leftRail, 
+                        " "));
                     }
                 });
-Calendar.EventContainer = React.createClass({
+Calendar.EventContainer = React.createClass({displayName: "EventContainer",
     getInitialState: function() {
         return {items: this.props.items};
     },
@@ -53,41 +53,30 @@ Calendar.EventContainer = React.createClass({
         var self = this;
         self.props.items.on('reset', function() {
             console.log(self.props.items);
-            self.setState({items: self.props.items});
+            self.setState({items: this.props.items});
         });
     },
     render: function() {
         var classes = {
             'eventContainer' : true
-        },
-        timeBlocks = [];
-        this.state.items.each(function (timeBlock) {
-            timeBlocks.push(<Calendar.ItemContainer blockStyle={timeBlock.toJSON()} />);
-        });
+        }
         Calendar.utils.addComponentWidthClass(classes, this.props.widthClass);
-        return (<div className={React.addons.classSet(classes)}> {timeBlocks}</div>)
+        return (React.createElement("div", {className: React.addons.classSet(classes)}))
     }
 });
-Calendar.ItemContainer = React.createClass({
+Calendar.ItemContainer = React.createClass({displayName: "ItemContainer",
     render: function() {
-        var info = this.props.blockStyle,
-            itemStyle = {
-                width: info.pixelWidth,
-                height: info.pixelHeight,
-                top: info.y,
-                left: info.x
-            };
-        return (<div style={itemStyle} className="singleTimeBlock">
-                    <h4> Sample Item </h4>
-                    <h6> Sample Location </h6>
-                </div>);
+        return (React.createElement("div", null, 
+                    React.createElement("h4", null, " Sample Item "), 
+                    React.createElement("h6", null, " Sample Location ")
+                ));
     }
 })
-Calendar.MainContainer = React.createClass({
+Calendar.MainContainer = React.createClass({displayName: "MainContainer",
     render: function() {
-        return (<div className="calendarContainer row">
-                <Calendar.LeftRail widthClass="col-md-1" defaults={this.props.railDefaults} /> 
-                <Calendar.EventContainer  widthClass="col-md-11" items={this.props.items} />
-            </div>);
+        return (React.createElement("div", {className: "calendarContainer row"}, 
+                React.createElement(Calendar.LeftRail, {widthClass: "col-md-1", defaults: this.props.railDefaults}), 
+                React.createElement(Calendar.EventContainer, {widthClass: "col-md-11", items: this.props.items})
+            ));
     }
 });
