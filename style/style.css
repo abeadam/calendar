@@ -35,7 +35,8 @@ body {
 }
 .singleTimeBlock {
     position: absolute;
-    border: 1px solid black;
+    border: 1px solid #E9E9E9;
+    box-shadow: 1px 1px #F9E9E9;
     border-left: 3px solid #3660A2;
     background-color: #FFF;
 
