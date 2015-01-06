@@ -16,6 +16,12 @@ body {
 .timeBlock {
     height: 30px;
 }
+.timeBlock .h6 {
+    color: #D8D8D8;
+}
+.timeBlock .h4 {
+    color: #A2A2A2;
+}
 .calendarContainer .col-md-1 {
     width: 80px;
 }
@@ -35,9 +41,17 @@ body {
 }
 .singleTimeBlock {
     position: absolute;
-    border: 1px solid #E9E9E9;
-    box-shadow: 1px 1px #F9E9E9;
+    border: 3px solid #E9E9E9;
     border-left: 3px solid #3660A2;
     background-color: #FFF;
+    padding-left: 10px;
+}
 
+.singleTimeBlock h4 {
+    color: #5676AE;
+    font-size: 0.8em;
+}
+.singleTimeBlock h6 {
+    color: #CACACA;
+    font-size: 0.6em;
 }
