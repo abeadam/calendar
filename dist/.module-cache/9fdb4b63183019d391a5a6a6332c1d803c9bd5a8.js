@@ -34,9 +34,10 @@ Calendar._setupHelper = function(dates) {
             counter = 0;
             endPointer++;
         } else {
-            if (startPointer < dates.length -1) {
-                startPointer++;
+            if (startPointer < dates.length) {
+                
             }
+            startPointer++;
             counter++;
         }
     }

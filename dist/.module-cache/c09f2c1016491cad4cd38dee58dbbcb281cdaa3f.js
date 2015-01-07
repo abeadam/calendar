@@ -19,27 +19,24 @@ Calendar._setupHelper = function(dates) {
         outputList = []; // list of collections, each collection is list of items that share width
     // here I am assuming stable sort which underscore provides
     // we will end up with a list sorted by start date -> end date
-    dates = _.sortBy(dates, function(date) {
+     dates = _.sortBy(dates, function(date) {
         return date.end;
-    });
-    dates = _.sortBy(dates, function(date) {
+     });
+     dates = _.sortBy(dates, function(date) {
         return date.start;
-    });
-    var startPointer = 0;
-    var endPointer = 0;
-    var counter = 0;
-    while (startPointer < dates.length || endPointer < dates.length) {
-        if (dates[startPointer].start >= dates[endPointer].end) {
-            console.log(dates[endPointer].start + ' ' + dates[startPointer].end + ' ' + counter);
-            counter = 0;
+     });
+     var startPointer = 0;
+     var endPointer = 0;
+     var counter = 0;
+     while ( startPointer < dates.length) {
+        if (startPoint >= endPointer) {
+            counter=0;
+            console.log(dates[endPointer]+' '+counter);
             endPointer++;
         } else {
-            if (startPointer < dates.length -1) {
-                startPointer++;
-            }
             counter++;
         }
-    }
+     }
     /*
      * our  bundleList will always be sorted by the earliest start date
      * each time we do an insert of new date, we will check if it belongs to an existing collection,
@@ -48,9 +45,7 @@ Calendar._setupHelper = function(dates) {
      */
     _.each(dates, function(date) {
         // we will do binary search for the correct item collection
-        var expectedLocation = _.sortedIndex(bundleList, {
-                minStart: date.start
-            }, function(obj) {
+        var expectedLocation = _.sortedIndex(bundleList, {minStart: date.start}, function(obj) {
                 return obj.minStart;
             }),
             currentBundle = null,
@@ -139,9 +134,6 @@ var DEFAULT_VALUES = [{
     end: 620
 }, {
     start: 610,
-    end: 620
-}, {
-    start: 620,
     end: 670
 }];
 $(function() {
@@ -154,17 +146,5 @@ $(function() {
         var datesObjects = Calendar._setupHelper(dates);
         calendarContainer.updateCollection(datesObjects);
     }
-    layOutDay([{
-        start: 30,
-        end: 150
-    }, {
-        start: 540,
-        end: 600
-    }, {
-        start: 560,
-        end: 620
-    }, {
-        start: 610,
-        end: 670
-    }]);
+    layOutDay([ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ]);
 });

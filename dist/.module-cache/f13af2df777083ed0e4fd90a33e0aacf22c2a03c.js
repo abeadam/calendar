@@ -28,15 +28,13 @@ Calendar._setupHelper = function(dates) {
     var startPointer = 0;
     var endPointer = 0;
     var counter = 0;
-    while (startPointer < dates.length || endPointer < dates.length) {
+    while (startPointer < dates.length) {
         if (dates[startPointer].start >= dates[endPointer].end) {
             console.log(dates[endPointer].start + ' ' + dates[startPointer].end + ' ' + counter);
             counter = 0;
             endPointer++;
         } else {
-            if (startPointer < dates.length -1) {
-                startPointer++;
-            }
+            startPointer++;
             counter++;
         }
     }
@@ -141,7 +139,7 @@ var DEFAULT_VALUES = [{
     start: 610,
     end: 620
 }, {
-    start: 620,
+    start: 610,
     end: 670
 }];
 $(function() {
