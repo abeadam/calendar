@@ -3,7 +3,7 @@ var Calendar = Calendar || {},
 
 Utils.Node = function(content, connections) {
     this.content = content;
-    this.connections = connections || [];
+    this.connections = connections;
     this.color = null;
 }
 Utils.Node.prototype = {
@@ -11,10 +11,8 @@ Utils.Node.prototype = {
             return this.connections;
         },
         addNeighbor: function(neighbor) {
-            var self = this;
-            if (this.connections.indexOf(neighbor) === -1 && neighbor !== self) {
-                this.connections.push(neighbor);
-                neighbor.addNeighbor(self);
+            if (this.neighbors.indexOf(neighbor) === -1 && neighbor !== self) {
+                this.neighbors.push(neighbor);
                 return true;
             }
             return false;
@@ -41,9 +39,9 @@ Utils.Node.prototype = {
     // this will attempt to solve the vertex coloring problem by choosing colors for highest degree nodes first
 Utils.getChromaticNumber = function(vertices) {
     var highestDegreeFirst = function(vertex) {
-            return -vertex.getNeighbors().length;
-        },
-        sortedVertices = vertices,
+        return -vertex.getNeighbors().length;
+    }
+    sortedVertices = vertices,
         graphSize = vertices.length,
         verticesColored = 0,
         chromaticNumber = 0,
@@ -80,23 +78,6 @@ Utils.getChromaticNumber = function(vertices) {
     }
     return chromaticNumber;
 }
-
-var Node = Utils.Node,
-    one = new Node(),
-    two = new Node(),
-    three = new Node(),
-    four = new Node(),
-    five = new Node(),
-    six = new Node();
-one.addNeighbor(two);
-three.addNeighbor(two);
-four.addNeighbor(two);
-four.addNeighbor(three);
-five.addNeighbor(three);
-five.addNeighbor(four);
-six.addNeighbor(five);
-six.addNeighbor(one);
-console.log(Utils.getChromaticNumber([one, three, two, four, five]));
 
 function layOutDay() {
     if (Calendar.setUp) {

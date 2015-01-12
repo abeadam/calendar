@@ -11,10 +11,8 @@ Utils.Node.prototype = {
             return this.connections;
         },
         addNeighbor: function(neighbor) {
-            var self = this;
             if (this.connections.indexOf(neighbor) === -1 && neighbor !== self) {
                 this.connections.push(neighbor);
-                neighbor.addNeighbor(self);
                 return true;
             }
             return false;
@@ -80,23 +78,6 @@ Utils.getChromaticNumber = function(vertices) {
     }
     return chromaticNumber;
 }
-
-var Node = Utils.Node,
-    one = new Node(),
-    two = new Node(),
-    three = new Node(),
-    four = new Node(),
-    five = new Node(),
-    six = new Node();
-one.addNeighbor(two);
-three.addNeighbor(two);
-four.addNeighbor(two);
-four.addNeighbor(three);
-five.addNeighbor(three);
-five.addNeighbor(four);
-six.addNeighbor(five);
-six.addNeighbor(one);
-console.log(Utils.getChromaticNumber([one, three, two, four, five]));
 
 function layOutDay() {
     if (Calendar.setUp) {

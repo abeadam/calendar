@@ -1,102 +1,4 @@
-var Calendar = Calendar || {},
-    Utils = {};
-
-Utils.Node = function(content, connections) {
-    this.content = content;
-    this.connections = connections || [];
-    this.color = null;
-}
-Utils.Node.prototype = {
-        getNeighbors: function() {
-            return this.connections;
-        },
-        addNeighbor: function(neighbor) {
-            var self = this;
-            if (this.connections.indexOf(neighbor) === -1 && neighbor !== self) {
-                this.connections.push(neighbor);
-                neighbor.addNeighbor(self);
-                return true;
-            }
-            return false;
-        },
-        getContent: function() {
-            return this.content;
-        },
-        getColor: function() {
-            return this.color;
-        },
-        setColor: function(color) {
-            var success = true;
-            _.each(this.getNeighbors(), function(neighbor) {
-                if (color === neighbor.getColor()) {
-                    success = false;
-                }
-            });
-            if (success) {
-                this.color = color;
-            }
-            return success;
-        }
-    }
-    // this will attempt to solve the vertex coloring problem by choosing colors for highest degree nodes first
-Utils.getChromaticNumber = function(vertices) {
-    var highestDegreeFirst = function(vertex) {
-            return -vertex.getNeighbors().length;
-        },
-        sortedVertices = vertices,
-        graphSize = vertices.length,
-        verticesColored = 0,
-        chromaticNumber = 0,
-        current,
-        workingVertexSet = [],
-        colorNonNeighbors = function(vertex, fullGraph) {
-            var neighbors = vertex.getNeighbors(),
-                nonNeighbors = [];
-            _.each(fullGraph, function(farVertex, index) {
-                if (neighbors.indexOf(farVertex) === -1 && farVertex !== vertex) {
-                    nonNeighbors.push({
-                        vertex: farVertex,
-                        index: index
-                    });
-                }
-            });
-            return nonNeighbors;
-        }
-    while (graphSize > verticesColored) {
-        sortedVertices = _.sortBy(sortedVertices, highestDegreeFirst);
-        current = sortedVertices.splice(0, 1)[0];
-        if (current.setColor(chromaticNumber)) {
-            verticesColored++;
-        }
-        workingVertexSet = colorNonNeighbors(current, sortedVertices);
-        _.each(workingVertexSet, function(possibleVertex) {
-            if (possibleVertex.vertex.setColor(chromaticNumber)) {
-                verticesColored++;
-                sortedVertices.splice(possibleVertex.index, 1);
-            }
-        });
-        // move to next possible color
-        chromaticNumber++;
-    }
-    return chromaticNumber;
-}
-
-var Node = Utils.Node,
-    one = new Node(),
-    two = new Node(),
-    three = new Node(),
-    four = new Node(),
-    five = new Node(),
-    six = new Node();
-one.addNeighbor(two);
-three.addNeighbor(two);
-four.addNeighbor(two);
-four.addNeighbor(three);
-five.addNeighbor(three);
-five.addNeighbor(four);
-six.addNeighbor(five);
-six.addNeighbor(one);
-console.log(Utils.getChromaticNumber([one, three, two, four, five]));
+var Calendar = Calendar || {};
 
 function layOutDay() {
     if (Calendar.setUp) {
@@ -122,20 +24,16 @@ Calendar._setupHelper = function(dates) {
         info = {},
         // given one location, this will find the number of collusion for the individual block
         findStoppingCount = function(loc, info) {
-            var count = 0,
-                currentVal,
-                blockStart = dates[loc].start,
-                blockEnd = dates[loc].end;
-            while (blockEnd > blockStart && loc < dates.length) {
-                if (count) {
-                    currentVal = info[loc];
-                    info[loc] = (currentVal || 0) + 1;
+            count = 0,
+            currentVal,
+            blockStart = dates[loc].start,
+            blockEnd = dates[loc].end;
+            while (blockEnd > blockStart && loc < dates.length-1) {
+                if (loc) {
+                    currentVal = dates[loc];
+                    info[currentVal] = (info[currentVal] || 0)  + 1; 
                 }
-                loc++;
-                if (dates[loc]) {
-                    blockStart = dates[loc].start;
-                }
-
+                blockStart = dates[++loc].start;
                 count++;
             }
             return count;
@@ -148,11 +46,11 @@ Calendar._setupHelper = function(dates) {
     dates = _.sortBy(dates, function(date) {
         return date.start;
     });
-    for (; loc < dates.length; loc++) {
-        info[loc] = (info[loc] || 0) + findStoppingCount(loc, info);
+    for ( ; loc < dates.length ; loc++) {
+        info[dates[loc]] = (info[currentVal] || 0) + findStoppingCount(loc, info);
     }
-    _.each(info, function(val, key) {
-        console.log(dates[key].start + ' ' + dates[key].end + ' ' + val);
+    _.each(info.keys(), function(key) {
+        console.log(key.start + ' '+key.end+' '+info[key]);
     });
     /*
      * our  bundleList will always be sorted by the earliest start date
@@ -253,6 +151,9 @@ var DEFAULT_VALUES = [{
     end: 620
 }, {
     start: 610,
+    end: 620
+}, {
+    start: 620,
     end: 670
 }];
 $(function() {
@@ -265,5 +166,17 @@ $(function() {
         var datesObjects = Calendar._setupHelper(dates);
         calendarContainer.updateCollection(datesObjects);
     }
-    layOutDay(DEFAULT_VALUES);
+    layOutDay([{
+        start: 30,
+        end: 150
+    }, {
+        start: 540,
+        end: 600
+    }, {
+        start: 560,
+        end: 620
+    }, {
+        start: 610,
+        end: 670
+    }]);
 });
