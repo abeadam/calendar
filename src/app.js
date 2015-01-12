@@ -81,23 +81,6 @@ Utils.getChromaticNumber = function(vertices) {
     return chromaticNumber;
 }
 
-var Node = Utils.Node,
-    one = new Node(),
-    two = new Node(),
-    three = new Node(),
-    four = new Node(),
-    five = new Node(),
-    six = new Node();
-one.addNeighbor(two);
-three.addNeighbor(two);
-four.addNeighbor(two);
-four.addNeighbor(three);
-five.addNeighbor(three);
-five.addNeighbor(four);
-six.addNeighbor(five);
-six.addNeighbor(one);
-console.log(Utils.getChromaticNumber([one, three, two, four, five]));
-
 function layOutDay() {
     if (Calendar.setUp) {
         Calendar.setUp.apply(this, arguments);
@@ -177,10 +160,7 @@ Calendar._setupHelper = function(dates) {
                     model.updateShared(len + 1);
                 });
                 bundle.add(
-                    new Calendar.EventItem(_.extend(obj, {
-                        sharedItems: len + 1,
-                        itemNumber: len
-                    }))
+                    new Calendar.EventItem(obj)
                 );
             };
         // we check possible collection for start and end, and merge them if needed
@@ -236,7 +216,33 @@ Calendar._setupHelper = function(dates) {
     });
     // how we need to go through them one more time to create a pure list of all the models 
     _.each(bundleList, function(bundle) {
+        // color the content of the bundle, the color is the insert location and width is the chromatic number
+        var coloredEventItems = [],
+            sizedEvents = [],
+            sharedItemsNum;
+        // create a list of nodes to color
         bundle.each(function(model) {
+            coloredEventItems.push(new Utils.Node(model));
+        });
+        // connect the nodes
+        _.each(coloredEventItems, function(event){
+            _.each(coloredEventItems, function(possibleConnection) {
+                var newEventStart = possibleConnection.getContent().get('start'),
+                    currentEvent = event.getContent();
+                if (currentEvent.get('start') <  newEventStart && currentEvent.get('end') > newEventStart) {
+                    event.addNeighbor(possibleConnection);
+                }
+            });
+        });
+        // color our bundle
+        sharedItemsNum = Utils.getChromaticNumber(coloredEventItems);
+        _.each(coloredEventItems, function(event) {
+            var content = event.getContent();
+            content.updateShared(sharedItemsNum, event.getColor());
+            sizedEvents.push(content);
+        });
+
+        _.each(sizedEvents, function(model) {
             outputList.push(model);
         });
     });
@@ -254,6 +260,9 @@ var DEFAULT_VALUES = [{
 }, {
     start: 610,
     end: 670
+}, {
+    start: 610,
+    end: 620
 }];
 $(function() {
     var calendarContainer = new Calendar.MainView({
