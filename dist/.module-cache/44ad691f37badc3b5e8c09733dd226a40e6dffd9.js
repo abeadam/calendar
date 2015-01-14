@@ -277,6 +277,9 @@ var DEFAULT_VALUES =
     }, {
         start: 610,
         end: 670
+    }, {
+        start: 610,
+        end: 620
     }];
 $(function() {
     var calendarContainer = new Calendar.MainView({

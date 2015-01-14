@@ -66,17 +66,18 @@ Utils.getChromaticNumber = function(vertices) {
         },
         moveLast = function(vertices) {
             var moved = 0,
-                moveOneNode = function(vertex) {
+                moveOneNode = function(node) {
                     var location = 0;
                     while (location < chromaticNumber - 1) {
-                        if (vertex.setColor(location)) {
+                        if (node.vertex.setColor(location)) {
                             return true;
                         }
-                        location++;
                     }
                     return false;
                 };
-            vertices = _.sortBy(vertices, highestDegreeFirst);
+            vertices = _.sortBy(vertices, function(vertex) {
+                return highestDegreeFirst(vertex);
+            });
             _.each(vertices, function(node) {
                 if (moveOneNode(node)) {
                     moved++
@@ -104,19 +105,15 @@ Utils.getChromaticNumber = function(vertices) {
         // move to next possible color
         chromaticNumber++;
     }
-
-    workingVertexSet = _.map(workingVertexSet, function(node) {
-        return node.vertex;
-    })
     while (attemptMove) {
-        workingVertexSet = [];
-        _.each(vertices, function(node) {
-            if (node.getColor() === chromaticNumber - 1) {
-                workingVertexSet.push(node);
-            }
-        })
         if (moveLast(workingVertexSet)) {
             chromaticNumber--;
+            workingVertexSetworkingVertexSet = [];
+            _.each(vertices, function(node) {
+                if (node.vertex.getColor() === chromaticNumber - 1) {
+                    workingVertexSet.push(node);
+                }
+            })
         } else {
             attemptMove = false;
         }
@@ -144,7 +141,29 @@ Calendar._setupHelper = function(dates) {
         outputList = [], // list of collections, each collection is list of items that share width
         startPointer = 0,
         endPointer = 0,
-        counter = 0;
+        counter = 0,
+        loc = 0,
+        info = {},
+        // given one location, this will find the number of collusion for the individual block
+        findStoppingCount = function(loc, info) {
+            var count = 0,
+                currentVal,
+                blockStart = dates[loc].start,
+                blockEnd = dates[loc].end;
+            while (blockEnd > blockStart && loc < dates.length) {
+                if (count) {
+                    currentVal = info[loc];
+                    info[loc] = (currentVal || 0) + 1;
+                }
+                loc++;
+                if (dates[loc]) {
+                    blockStart = dates[loc].start;
+                }
+
+                count++;
+            }
+            return count;
+        };
     // here I am assuming stable sort which underscore provides
     // we will end up with a list sorted by start date -> end date
     dates = _.sortBy(dates, function(date) {
@@ -152,6 +171,12 @@ Calendar._setupHelper = function(dates) {
     });
     dates = _.sortBy(dates, function(date) {
         return date.start;
+    });
+    for (; loc < dates.length; loc++) {
+        info[loc] = (info[loc] || 0) + findStoppingCount(loc, info);
+    }
+    _.each(info, function(val, key) {
+        console.log(dates[key].start + ' ' + dates[key].end + ' ' + val);
     });
     /*
      * our  bundleList will always be sorted by the earliest start date
@@ -266,17 +291,77 @@ Calendar._setupHelper = function(dates) {
 }
 var DEFAULT_VALUES =
     [{
-        start: 30,
-        end: 150
+        "id": 1,
+        "start": 36,
+        "end": 108
     }, {
-        start: 540,
-        end: 600
+        "id": 2,
+        "start": 67,
+        "end": 139
     }, {
-        start: 560,
-        end: 620
+        "id": 3,
+        "start": 110,
+        "end": 182
     }, {
-        start: 610,
-        end: 670
+        "id": 4,
+        "start": 156,
+        "end": 230
+    }, {
+        "id": 5,
+        "start": 205,
+        "end": 285
+    }, {
+        "id": 6,
+        "start": 255,
+        "end": 333
+    }, {
+        "id": 7,
+        "start": 278,
+        "end": 362
+    }, {
+        "id": 8,
+        "start": 342,
+        "end": 424
+    }, {
+        "id": 9,
+        "start": 392,
+        "end": 445
+    }, {
+        "id": 10,
+        "start": 426,
+        "end": 511
+    }, {
+        "id": 11,
+        "start": 484,
+        "end": 547
+    }, {
+        "id": 12,
+        "start": 512,
+        "end": 563
+    }, {
+        "id": 13,
+        "start": 525,
+        "end": 580
+    }, {
+        "id": 14,
+        "start": 548,
+        "end": 604
+    }, {
+        "id": 15,
+        "start": 569,
+        "end": 625
+    }, {
+        "id": 16,
+        "start": 580,
+        "end": 647
+    }, {
+        "id": 17,
+        "start": 607,
+        "end": 659
+    }, {
+        "id": 18,
+        "start": 630,
+        "end": 685
     }];
 $(function() {
     var calendarContainer = new Calendar.MainView({

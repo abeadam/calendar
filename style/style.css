@@ -45,6 +45,7 @@ body {
     border-left: 3px solid #3660A2;
     background-color: #FFF;
     padding-left: 10px;
+    overflow: auto;
 }
 
 .singleTimeBlock h4 {

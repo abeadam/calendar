@@ -49,8 +49,6 @@ Utils.getChromaticNumber = function(vertices) {
         chromaticNumber = 0,
         current,
         workingVertexSet = [],
-        lastNodes = [],
-        attemptMove = true,
         colorNonNeighbors = function(vertex, fullGraph) {
             var neighbors = vertex.getNeighbors(),
                 nonNeighbors = [];
@@ -63,31 +61,7 @@ Utils.getChromaticNumber = function(vertices) {
                 }
             });
             return nonNeighbors;
-        },
-        moveLast = function(vertices) {
-            var moved = 0,
-                moveOneNode = function(vertex) {
-                    var location = 0;
-                    while (location < chromaticNumber - 1) {
-                        if (vertex.setColor(location)) {
-                            return true;
-                        }
-                        location++;
-                    }
-                    return false;
-                };
-            vertices = _.sortBy(vertices, highestDegreeFirst);
-            _.each(vertices, function(node) {
-                if (moveOneNode(node)) {
-                    moved++
-                }
-            });
-            if (moved === vertices.length) {
-                return true;
-            } else {
-                return false;
-            }
-        };
+        }
     while (graphSize > verticesColored) {
         sortedVertices = _.sortBy(sortedVertices, highestDegreeFirst);
         current = sortedVertices.splice(0, 1)[0];
@@ -104,26 +78,25 @@ Utils.getChromaticNumber = function(vertices) {
         // move to next possible color
         chromaticNumber++;
     }
-
-    workingVertexSet = _.map(workingVertexSet, function(node) {
-        return node.vertex;
-    })
-    while (attemptMove) {
-        workingVertexSet = [];
-        _.each(vertices, function(node) {
-            if (node.getColor() === chromaticNumber - 1) {
-                workingVertexSet.push(node);
-            }
-        })
-        if (moveLast(workingVertexSet)) {
-            chromaticNumber--;
-        } else {
-            attemptMove = false;
-        }
-    }
-    //attempt to color the last nodes with a lower number
     return chromaticNumber;
 }
+
+var Node = Utils.Node,
+    one = new Node(),
+    two = new Node(),
+    three = new Node(),
+    four = new Node(),
+    five = new Node(),
+    six = new Node();
+one.addNeighbor(two);
+three.addNeighbor(two);
+four.addNeighbor(two);
+four.addNeighbor(three);
+five.addNeighbor(three);
+five.addNeighbor(four);
+six.addNeighbor(five);
+six.addNeighbor(one);
+console.log(Utils.getChromaticNumber([one, three, two, four, five]));
 
 function layOutDay() {
     if (Calendar.setUp) {
@@ -144,7 +117,29 @@ Calendar._setupHelper = function(dates) {
         outputList = [], // list of collections, each collection is list of items that share width
         startPointer = 0,
         endPointer = 0,
-        counter = 0;
+        counter = 0,
+        loc = 0,
+        info = {},
+        // given one location, this will find the number of collusion for the individual block
+        findStoppingCount = function(loc, info) {
+            var count = 0,
+                currentVal,
+                blockStart = dates[loc].start,
+                blockEnd = dates[loc].end;
+            while (blockEnd > blockStart && loc < dates.length) {
+                if (count) {
+                    currentVal = info[loc];
+                    info[loc] = (currentVal || 0) + 1;
+                }
+                loc++;
+                if (dates[loc]) {
+                    blockStart = dates[loc].start;
+                }
+
+                count++;
+            }
+            return count;
+        };
     // here I am assuming stable sort which underscore provides
     // we will end up with a list sorted by start date -> end date
     dates = _.sortBy(dates, function(date) {
@@ -152,6 +147,12 @@ Calendar._setupHelper = function(dates) {
     });
     dates = _.sortBy(dates, function(date) {
         return date.start;
+    });
+    for (; loc < dates.length; loc++) {
+        info[loc] = (info[loc] || 0) + findStoppingCount(loc, info);
+    }
+    _.each(info, function(val, key) {
+        console.log(dates[key].start + ' ' + dates[key].end + ' ' + val);
     });
     /*
      * our  bundleList will always be sorted by the earliest start date
@@ -232,52 +233,25 @@ Calendar._setupHelper = function(dates) {
     });
     // how we need to go through them one more time to create a pure list of all the models 
     _.each(bundleList, function(bundle) {
-        // color the content of the bundle, the color is the insert location and width is the chromatic number
-        var coloredEventItems = [],
-            sizedEvents = [],
-            sharedItemsNum;
-        // create a list of nodes to color
         bundle.each(function(model) {
-            coloredEventItems.push(new Utils.Node(model));
-        });
-        // connect the nodes
-        _.each(coloredEventItems, function(event) {
-            _.each(coloredEventItems, function(possibleConnection) {
-                var newEventStart = possibleConnection.getContent().get('start'),
-                    currentEvent = event.getContent();
-                if (currentEvent.get('start') <= newEventStart && currentEvent.get('end') > newEventStart) {
-                    event.addNeighbor(possibleConnection);
-                }
-            });
-        });
-        // color our bundle
-        sharedItemsNum = Utils.getChromaticNumber(coloredEventItems);
-        _.each(coloredEventItems, function(event) {
-            var content = event.getContent();
-            content.updateShared(sharedItemsNum, event.getColor());
-            sizedEvents.push(content);
-        });
-
-        _.each(sizedEvents, function(model) {
             outputList.push(model);
         });
     });
     return outputList;
 }
-var DEFAULT_VALUES =
-    [{
-        start: 30,
-        end: 150
-    }, {
-        start: 540,
-        end: 600
-    }, {
-        start: 560,
-        end: 620
-    }, {
-        start: 610,
-        end: 670
-    }];
+var DEFAULT_VALUES = [{
+    start: 30,
+    end: 150
+}, {
+    start: 540,
+    end: 600
+}, {
+    start: 560,
+    end: 620
+}, {
+    start: 610,
+    end: 670
+}];
 $(function() {
     var calendarContainer = new Calendar.MainView({
         el: $('.appContainer'),

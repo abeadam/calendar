@@ -266,17 +266,77 @@ Calendar._setupHelper = function(dates) {
 }
 var DEFAULT_VALUES =
     [{
-        start: 30,
-        end: 150
+        "id": 1,
+        "start": 36,
+        "end": 108
     }, {
-        start: 540,
-        end: 600
+        "id": 2,
+        "start": 67,
+        "end": 139
     }, {
-        start: 560,
-        end: 620
+        "id": 3,
+        "start": 110,
+        "end": 182
     }, {
-        start: 610,
-        end: 670
+        "id": 4,
+        "start": 156,
+        "end": 230
+    }, {
+        "id": 5,
+        "start": 205,
+        "end": 285
+    }, {
+        "id": 6,
+        "start": 255,
+        "end": 333
+    }, {
+        "id": 7,
+        "start": 278,
+        "end": 362
+    }, {
+        "id": 8,
+        "start": 342,
+        "end": 424
+    }, {
+        "id": 9,
+        "start": 392,
+        "end": 445
+    }, {
+        "id": 10,
+        "start": 426,
+        "end": 511
+    }, {
+        "id": 11,
+        "start": 484,
+        "end": 547
+    }, {
+        "id": 12,
+        "start": 512,
+        "end": 563
+    }, {
+        "id": 13,
+        "start": 525,
+        "end": 580
+    }, {
+        "id": 14,
+        "start": 548,
+        "end": 604
+    }, {
+        "id": 15,
+        "start": 569,
+        "end": 625
+    }, {
+        "id": 16,
+        "start": 580,
+        "end": 647
+    }, {
+        "id": 17,
+        "start": 607,
+        "end": 659
+    }, {
+        "id": 18,
+        "start": 630,
+        "end": 685
     }];
 $(function() {
     var calendarContainer = new Calendar.MainView({
